@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../redux/user/userSlice';
 export default function signin() {
   const [formdata,setFormData]=useState({});
   const{loading,error}=useSelector((state)=>state.user);
@@ -33,7 +37,7 @@ export default function signin() {
     navigate('/');
     }
     catch(error){
-      dispatch(signInFailure(data.message));
+      dispatch(signInFailure(error.message));
     }
     console.log(data);
   };
