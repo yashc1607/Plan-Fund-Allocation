@@ -8,7 +8,9 @@ import Header from './components/header';
 import Action1 from './components/Action1';
 import Faculty from './pages/faculty';
 import Vendor from './pages/vendor';
+import ProgramCoordinator from './pages/pc';
 import PrivateRoute from './components/PrivateRoute';
+
 
 export default function App() {
   return (
@@ -22,10 +24,11 @@ export default function App() {
         <Route path="/Signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
         <Route path="/Signin" element={<Signin />} />
-        <Route path="/Faculty" element={<Faculty />} />
-        <Route path="/Vendor" element={<Vendor />} />
         <Route element={<PrivateRoute/>}>
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/Profile" element={<Profile />} />
+          <Route path="/Faculty" element={<Faculty />} />
+          <Route path="/Vendor" element={<Vendor />} />
+          <Route path="/ProgramCoordinator" element={<ProgramCoordinator />} />
         </Route>
       </Routes>
     </BrowserRouter>
