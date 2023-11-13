@@ -53,9 +53,9 @@ export default function signup() {
         </select>
         {formdata.usertype==='vendor' && (
           <>
-          <input type="text" placeholder='name' className='border p-3 rounded-lg' id='name'onChange={handleChange}/>
-          <input type="text" placeholder='email' className='border p-3 rounded-lg' id='email'onChange={handleChange}/>
-          <input type="password" placeholder='password' className='border p-3 rounded-lg' id='password' onChange={handleChange}/>
+          <input type="text" required placeholder='name' className='border p-3 rounded-lg' id='name'onChange={handleChange}/>
+          <input type="text" required placeholder='email' className='border p-3 rounded-lg' id='email'onChange={handleChange}/>
+          <input type="password" required placeholder='password' className='border p-3 rounded-lg' id='password' onChange={handleChange}/>
           <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-90 disabled:opacity-80'>
           {loading ? 'Loading...':'Sign Up'}
         </button>

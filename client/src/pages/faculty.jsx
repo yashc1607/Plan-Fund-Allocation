@@ -12,6 +12,7 @@ export default function Faculty() {
   const [error, setError] = useState(false);
   const [getProposalError, setProposalError] = useState(false);
   const [proposalData, setProposalData] = useState([]);
+  const [proposalAllData, setProposalAllData] = useState([]);
   const [updatedProposals, setUpdatedProposals] = useState([]);
   const [formData, setFormData] = useState({
     name:'',
@@ -20,6 +21,7 @@ export default function Faculty() {
     reason: '',
     budget: 1,
     unitPrice: 1,
+    specification:'',
     quantity: 1,
   });
   const handleDeadline = async () => {
@@ -105,13 +107,12 @@ export default function Faculty() {
   const getProposal = async () => {
     try {
       setProposalError(false);
-      //const res = await fetch('/api/proposal/getProposal');
       const { email } = currentUser;
-      // Include email as a query parameter in the URL
       const queryParams = new URLSearchParams({
         email,
       });
       const res = await fetch(`/api/proposal/getProposal?${queryParams.toString()}`);
+      //console.log(res);
       const data = await res.json();
       if (data.success === false) {
         setProposalError(data);
@@ -123,32 +124,146 @@ export default function Faculty() {
     }
   };
 
+  const getAllProposal = async () => {
+    try {
+      setProposalError(false);
+      
+      const res = await fetch('/api/proposal/getAllProposal');
+      //console.log(res);
+      const data = await res.json();
+      if (data.success === false) {
+        setProposalAllData(data);
+        return;
+      }
+      setProposalAllData(data);
+    } catch (error) {
+      setProposalError(true);
+    }
+  };
+
   useEffect(() => {
     handleDeadline();
   }, []);
-  useEffect(() => {
-    getProposal();
-  }, []);
+
+  //console.log(currentUser.usertype);
+  if(currentUser.usertype==='department'){
+    useEffect(() => {
+      getProposal();
+    }, []);
+  }
+  if(currentUser.usertype==='coordinator'){
+    useEffect(() => {
+      getAllProposal();
+    }, []);
+  }
+  
   const currDate = new Date();
   const today = (currDate.getFullYear())+"-"+(currDate.getMonth()+1)+"-"+(currDate.getDate());
   var showReqPropFlag=(getDeadlineError && getDeadlineError.statusCode===404);
   //showReqPropFlag=true;
   //console.log(showReqPropFlag);
 
-  const handleAccept = (key) => {
-    // Implement logic for accepting the proposal with the specified key
-    // For now, let's just update the status to 'accepted'
-    const updatedProposal = { ...proposalData[key], status: 'accepted' };
-    const updatedProposalsCopy = [...updatedProposals, updatedProposal];
-    setUpdatedProposals(updatedProposalsCopy);
+  const handleAccept = async (key) => {
+    try {
+        const budget = prompt('Enter the budget for accepting the proposal:');
+        const response = await fetch(`/api/proposal/acceptProposal/${key}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              status: 'Accepted',budget}),
+        });
+        //console.log(response);
+        if (response.ok) {
+          window.location.reload(false);
+            // Handle success if needed
+        } else {
+            console.error('Failed to accept proposal');
+        }
+    } catch (error) {
+        console.error('Error accepting proposal:', error);
+    }
+};
+
+  const handleReject = async (key) => {
+    try {
+      // Placeholder API endpoint for rejecting a proposal
+      const reason = prompt('Enter the reason for rejecting the proposal:');
+      const response = await fetch(`/api/proposal/rejectProposal/${key}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'Rejected',reason }),
+      });
+
+      if (response.ok) {
+        window.location.reload(false);
+         } else {
+        // Handle error
+        console.error('Failed to reject proposal');
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error('Error rejecting proposal:', error);
+    }
+  };
+  const requestedProposals = proposalData.filter((proposal) => proposal.status === 'Requested');
+  const acceptedProposals = proposalData.filter((proposal) => proposal.status === 'Accepted');
+  const specSubmitted = proposalData.filter((proposal) => proposal.status === 'Specification Submitted');
+  const rejectedProposals = proposalData.filter((proposal) => proposal.status === 'Rejected');
+
+  const allRequestedProposals = proposalAllData.filter((proposal) => proposal.status === 'Requested');
+  const allAcceptedProposals = proposalAllData.filter((proposal) => proposal.status === 'Accepted');
+  const allRejectedProposals = proposalAllData.filter((proposal) => proposal.status === 'Rejected');
+  const allSpecSubmitted = proposalAllData.filter((proposal) => proposal.status === 'Specification Submitted');
+  //console.log(requestedProposals);
+ 
+  const handleUploadSpecification = async (proposalId) => {
+    try {
+      const advertisement = prompt('Enter the specification for proposal:');
+      const response = await fetch(`/api/proposal/submitSpecification/${proposalId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'Advertisement Created'}),
+      });
+
+      if (response.ok) {
+        console.log('Proposal status updated successfully');
+
+        window.location.reload(false);
+      } else {
+        console.error('Failed to upload specification');
+      }
+    } catch (error) {
+      console.error('Error uploading specification:', error);
+    }
   };
 
-  const handleReject = (key) => {
-    // Implement logic for rejecting the proposal with the specified key
-    // For now, let's just update the status to 'rejected'
-    const updatedProposal = { ...proposalData[key], status: 'rejected' };
-    const updatedProposalsCopy = [...updatedProposals, updatedProposal];
-    setUpdatedProposals(updatedProposalsCopy);
+  const handleAdvCreation = async (proposalId) => {
+    try {
+      const specification = prompt('Enter the specification for proposal:');
+      const response = await fetch(`/api/proposal/submitSpecification/${proposalId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'Specification Submitted',specification }),
+      });
+
+      if (response.ok) {
+        // Handle success if needed
+        console.log('Specification uploaded successfully');
+        window.location.reload(false);
+      } else {
+        console.error('Failed to upload specification');
+      }
+    } catch (error) {
+      console.error('Error uploading specification:', error);
+    }
   };
 
   return (
@@ -171,7 +286,7 @@ export default function Faculty() {
 
       {/*start:Request for proposal for program coordinator*/}
       {currentUser.usertype==='department'?
-        <div className='p-3 max-w-4xl mx-auto'>
+        <div className='max-w-4xl mx-auto m-4'>
           <h1 className='text-3xl font-semibold text-center my-7'>
             Submit Proposal
           </h1>
@@ -204,8 +319,9 @@ export default function Faculty() {
       {/*Start: Requested proposal for faculty user */}
       {currentUser.usertype==='department' && !showReqPropFlag?
         <div >
-          <h1 className='bg-slate-300 mx-2 gap-4 flow-root p-3 '>Submitted Proposal</h1>
-          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 mt-4 transform translate-x-1/4'>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Requested Proposal</h1>
+          {requestedProposals.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
                 <th className='py-2 px-4'>Description</th>
@@ -215,7 +331,7 @@ export default function Faculty() {
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {proposalData.map((val, key) => (
+              {requestedProposals.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.quantity}</td>
@@ -225,14 +341,108 @@ export default function Faculty() {
               ))}
             </tbody>
           </table>
+          
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Pending Proposal Requests</h1>}
         </div>:''
       }
       {/*End: Requested table for faculty user */}
 
+      {/*Start: Accepted proposal for faculty user */}
+      {currentUser.usertype==='department' && !showReqPropFlag?
+        <div >
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Accepted Proposal</h1>
+          {acceptedProposals.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Quantity</th>
+                <th className='py-2 px-4'>Unit Price</th>
+                <th className='py-2 px-4'>Budget</th>
+                <th className='py-2 px-4'>Action</th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {acceptedProposals.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.quantity}</td>
+                  <td className='py-2 px-4'>{val.unitPrice}</td>
+                  <td className='py-2 px-4'>{val.budget}</td>
+                  <td>
+                    <div>
+                    <button onClick={() => handleUploadSpecification(val._id)} className='bg-blue-900 text-white rounded-lg  px-2 py-1 m-1'>Submit Specification</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Proposal</h1>}
+        </div>:''
+      }
+      {specSubmitted.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 m-4'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Quantity</th>
+                <th className='py-2 px-4'>Unit Price</th>
+                <th className='py-2 px-4'>Specification</th>
+                <th className='py-2 px-4'>Status</th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {specSubmitted.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.quantity}</td>
+                  <td className='py-2 px-4'>{val.unitPrice}</td>
+                  <td className='py-2 px-4'>{val.specification}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          :''}
+      {/*End: Accepted table for faculty user */}
+
+      {/*Start: Accepted proposal for faculty user */}
+      {currentUser.usertype==='department' && !showReqPropFlag?
+        <div>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Rejected Proposal</h1>
+          {rejectedProposals.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Quantity</th>
+                <th className='py-2 px-4'>Unit Price</th>
+                <th className='py-2 px-4'>Reason</th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {rejectedProposals.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.quantity}</td>
+                  <td className='py-2 px-4'>{val.unitPrice}</td>
+                  <td className='py-2 px-4'>{val.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Proposal</h1>}
+        </div>:''
+      }
+      {/*End: Rejected table for faculty user */}
+
       {/*Start: Requested table for coordinator user */}
       {currentUser.usertype==='coordinator' && !showReqPropFlag?
         <div >
-          <h1 className='bg-slate-300 mx-2 gap-4 flow-root p-3 '>Submitted Proposal</h1>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-m font-semibold m-4'>Requested Proposal</h1>
+          {allRequestedProposals.length>0?
           <table className='min-w-mid bg-slate-100 border border-slate-200 mx-2 mt-4 transform translate-x-1/4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
@@ -244,21 +454,17 @@ export default function Faculty() {
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {proposalData.map((val, key) => (
+              {allRequestedProposals.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.quantity}</td>
                   <td className='py-2 px-4'>{val.unitPrice}</td>
                   <td className='py-2 px-4'>{val.status}</td>
                   <td className='py-2 px-4'>
-                    {val.status === 'Requested' && (
+                    {val.status === 'Requested'&& (
                       <>
-                        <button onClick={() => handleAccept(key)} className='bg-green-800 text-white rounded-lg  px-2 py-1 mr-2'>
-                          Accept
-                        </button>
-                        <button onClick={() => handleReject(key)} className='bg-red-800 text-white rounded-lg px-2 py-1'>
-                          Reject
-                        </button>
+                        <button onClick={() => handleAccept(val._id)} className='bg-green-800 text-white rounded-lg  px-2 py-1 mr-2'>Accept</button>
+                        <button onClick={() => handleReject(val._id)} className='bg-red-800 text-white rounded-lg px-2 py-1'>Reject</button>
                       </>
                     )}
                   </td>
@@ -266,6 +472,45 @@ export default function Faculty() {
               ))}
             </tbody>
           </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Pending Proposal</h1>}
+        </div>:''
+      }
+
+      {currentUser.usertype==='coordinator' && !showReqPropFlag?
+        <div >
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-m font-semibold m-4'>Specification</h1>
+          {allSpecSubmitted.length>0?
+          <table className='min-w-mid bg-slate-100 border border-slate-200 mx-2 mt-4 transform translate-x-1/4'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Quantity</th>
+                <th className='py-2 px-4'>Unit Price</th>
+                <th className='py-2 px-4'>Status</th>
+                <th className='py-2 px-4'>Specification</th>
+                <th className='py-2 px-4'>Actions</th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {allSpecSubmitted.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.quantity}</td>
+                  <td className='py-2 px-4'>{val.unitPrice}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                  <td className='py-2 px-4'>{val.specification}</td>
+                  <td className='py-2 px-4'>
+                    {val.status === 'Specification Submitted'&& (
+                      <>
+                        <button onClick={() => handleAdvCreation(val._id)} className='bg-blue-900 text-white rounded-lg  px-2 py-1 mr-2'>Create Advertisement</button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Pending Proposal</h1>}
         </div>:''
       }
      

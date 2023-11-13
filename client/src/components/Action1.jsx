@@ -9,7 +9,7 @@ export default function Action1() {
   return (
     <header className='bg-slate-300'>
         <div>
-            <ul className='gap-2 flow-root'>
+            <ul className='gap-2 flow-root text-lg font-semibold'>
             
             {currentUser?(
                 <>

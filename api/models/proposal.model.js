@@ -25,10 +25,11 @@ const proposalSchema=new mongoose.Schema({
    reason:{
        type:String,
    },
-   specificationFile: {
-    data: Buffer, 
-    contentType: String,
-    filename: String, 
+   specification: {
+    type:String,
+  },
+  advID: {
+    type:String,
   },
 
 },{timestamps:true});
