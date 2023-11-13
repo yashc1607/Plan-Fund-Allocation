@@ -222,29 +222,6 @@ export default function Faculty() {
  
   const handleUploadSpecification = async (proposalId) => {
     try {
-      const advertisement = prompt('Enter the specification for proposal:');
-      const response = await fetch(`/api/proposal/submitSpecification/${proposalId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'Advertisement Created'}),
-      });
-
-      if (response.ok) {
-        console.log('Proposal status updated successfully');
-
-        window.location.reload(false);
-      } else {
-        console.error('Failed to upload specification');
-      }
-    } catch (error) {
-      console.error('Error uploading specification:', error);
-    }
-  };
-
-  const handleAdvCreation = async (proposalId) => {
-    try {
       const specification = prompt('Enter the specification for proposal:');
       const response = await fetch(`/api/proposal/submitSpecification/${proposalId}`, {
         method: 'POST',
@@ -263,6 +240,28 @@ export default function Faculty() {
       }
     } catch (error) {
       console.error('Error uploading specification:', error);
+    }
+  };
+
+  const handleAdvCreation = async (proposalId) => {
+    try {
+      const advertisement = prompt('Enter the advertisement description for proposal:');
+      const response = await fetch(`/api/proposal/advCreated/${proposalId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'Advertisement Created',advertisement:advertisement}),
+      });
+      console.log(response);
+      if (response.ok) {
+        console.log('Advertisement Created successfully');
+        window.location.reload(false);
+      } else {
+        console.error('Failed to create Advertisement');
+      }
+    } catch (error) {
+      console.error('Error creating Advertisement:', error);
     }
   };
 
@@ -446,6 +445,7 @@ export default function Faculty() {
           <table className='min-w-mid bg-slate-100 border border-slate-200 mx-2 mt-4 transform translate-x-1/4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
+                <th className='py-2 px-4'>Requested By</th>
                 <th className='py-2 px-4'>Description</th>
                 <th className='py-2 px-4'>Quantity</th>
                 <th className='py-2 px-4'>Unit Price</th>
@@ -456,6 +456,7 @@ export default function Faculty() {
             <tbody className='divide-y divide-slate-200'>
               {allRequestedProposals.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.name}</td>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.quantity}</td>
                   <td className='py-2 px-4'>{val.unitPrice}</td>
@@ -480,9 +481,10 @@ export default function Faculty() {
         <div >
           <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-m font-semibold m-4'>Specification</h1>
           {allSpecSubmitted.length>0?
-          <table className='min-w-mid bg-slate-100 border border-slate-200 mx-2 mt-4 transform translate-x-1/4'>
+          <table className='min-w-mid bg-slate-100 border border-slate-200 mx-auto mt-4 '>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
+                <th className='py-2 px-4'>Requested By</th>
                 <th className='py-2 px-4'>Description</th>
                 <th className='py-2 px-4'>Quantity</th>
                 <th className='py-2 px-4'>Unit Price</th>
@@ -494,6 +496,7 @@ export default function Faculty() {
             <tbody className='divide-y divide-slate-200'>
               {allSpecSubmitted.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.name}</td>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.quantity}</td>
                   <td className='py-2 px-4'>{val.unitPrice}</td>

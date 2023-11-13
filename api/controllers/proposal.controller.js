@@ -1,5 +1,3 @@
-import { log } from "console";
-import express from 'express';
 import Proposal from "../models/proposal.model.js";
 import { errorHandler } from '../utils/error.js';
 
@@ -84,14 +82,14 @@ export const rejectProposal = async (req, res, next) => {
   }
 };
 
-export const submitSpecification = async (req, res, next) => {
+export const advCreated = async (req, res, next) => {
   try {
-    const { status, specification } = req.body;
+    const { status,advertisement } = req.body;
       const updatedProposal = await Proposal.findOneAndUpdate(
         {_id:req.params.id},
         {
           $set: {
-            status: status,specification:specification
+            status: status,advertisement:advertisement
           },
         },
         { new: true }
@@ -100,15 +98,15 @@ export const submitSpecification = async (req, res, next) => {
       if (!updatedProposal) {
           return res.status(404).json({ error: 'Proposal not found' });
       }
-      res.status(200).json({ message: 'specification accepted successfully', proposal: updatedProposal });
+      res.status(200).json({ message: 'Advertisement created successfully', proposal: updatedProposal,
+    });
   } catch (error) {
       next(error);
   }
 };
-
-export const advCreated = async (req, res, next) => {
+export const submitSpecification = async (req, res, next) => {
   try {
-    const { status } = req.body;
+    const { status, specification } = req.body;
       const updatedProposal = await Proposal.findOneAndUpdate(
         {_id:req.params.id},
         {

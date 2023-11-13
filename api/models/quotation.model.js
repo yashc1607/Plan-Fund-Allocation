@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const proposalSchema=new mongoose.Schema({
+const quotationSchema=new mongoose.Schema({
     name:{
         type:String, required:true,
    },
@@ -25,15 +25,15 @@ const proposalSchema=new mongoose.Schema({
    reason:{
        type:String,
    },
-   specification: {
+   other: {
     type:String,
   },
-  advertisement: {
+  advId: {
     type:String,
   },
 
 },{timestamps:true});
 
-const Proposal=mongoose.model('Proposal',proposalSchema);
+const Quotation=mongoose.model('Quotation',quotationSchema);
 
-export default Proposal;
+export default Quotation;

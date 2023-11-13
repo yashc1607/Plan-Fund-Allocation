@@ -18,7 +18,7 @@ export default function Action1() {
                         <button className='hover:bg-white p-3'>Proposals</button>
                     </Link>
                     
-                    <Link to='/ProgramCoordinator'>
+                    <Link to='/Quotation'>
                         <button className='hover:bg-white p-3'>Quotations</button>
                     </Link>
                     <Link to='/Profile'>
@@ -32,9 +32,11 @@ export default function Action1() {
                     <button className='hover:bg-white p-3 float-right'>Sign In</button>
                 </Link>
                 </>
-                
                 )
             }
+            <Link to='/Advertisement'>
+                <button className='hover:bg-white p-3'>Advertisement</button>
+            </Link>
             
             </ul>
         </div>

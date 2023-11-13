@@ -5,6 +5,7 @@ import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 import deadlineRouter from './routes/deadline.route.js';
 import proposalRouter from './routes/proposal.route.js';
+import quotationRouter from './routes/quotation.route.js';
 import cookieParser from 'cookie-parser';
 dotenv.config();
 mongoose
@@ -26,6 +27,7 @@ app.use('/api/user',userRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/deadline',deadlineRouter);
 app.use('/api/proposal',proposalRouter);
+app.use('/api/quotation',quotationRouter);
 app.use((err,req,res,next)=>{
    const statusCode = err.statusCode||500;
    const message=err.message||'Internal Server Error';
