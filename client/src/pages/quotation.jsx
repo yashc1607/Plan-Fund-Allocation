@@ -4,67 +4,123 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function advertisement() {
-  var vendorUser=false;
+  var coordinatorUser=false;
   const {currentUser}=useSelector((state)=>state.user);
-  const [proposalAllData, setProposalAllData] = useState([]);
+  const [AllQuotationData, setAllQuotation] = useState([]);
   const [getProposalError, setProposalError] = useState(false);
   const [getQuotationError, setQuotationError] = useState(false);
   const [submissionData, setSubmissionData] = useState([]);
   const [quotationData, setQuotationData] = useState([]);
-  
-  if(currentUser && currentUser.usertype==='vendor'){
-    vendorUser=true;
+  const [rejectID,setRejectID]=useState([]);
+
+  if(currentUser && currentUser.usertype==='coordinator'){
+    coordinatorUser=true;
   }
   useEffect(() => {
-    getAllProposal();
+    getAllQuotation();
   }, []);
-  const getAllProposal = async () => {
+  const getAllQuotation = async () => {
     try {
       setProposalError(false);
       
-      const res = await fetch('/api/proposal/getAllProposal');
+      const res = await fetch('/api/quotation/getAllQuotation');
       //console.log(res);
       const data = await res.json();
       if (data.success === false) {
-        setProposalAllData(data);
+        setAllQuotation(data);
         return;
       }
-      setProposalAllData(data);
+      setAllQuotation(data);
     } catch (error) {
       setProposalError(error);
     }
   };
-
-  useEffect(() => {
-    getQuotation();
-  }, []);
-  const getQuotation = async () => {
+  //console.log(AllQuotationData);
+  const handleAccept = async (key) => {
     try {
-      setQuotationError(false);
-      const { email } = currentUser;
-      const queryParams = new URLSearchParams({
-        email,
-      });
-      const res = await fetch(`/api/quotation/getQuotation?${queryParams.toString()}`);
-      //console.log(res);
-      const data = await res.json();
-      if (data.success === false) {
-        setQuotationData(data);
-        return;
-      }
-      setQuotationData(data);
+        const response = await fetch(`/api/quotation/acceptQuotation/${key._id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              status: 'Quotation Accepted'}),
+        });
+        //console.log(response);
+        if (response.ok) {
+          const res = await fetch(`/api/proposal/acceptQuotation/${key.advId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                status: 'Quotation Accepted'}),
+          });
+          window.location.reload(false);
+          
+          //handleBulkReject();
+          
+            // Handle success if needed
+        } else {
+            console.error('Failed to accept proposal');
+        }
     } catch (error) {
-      setQuotationError(error);
+        console.error('Error accepting proposal:', error);
     }
   };
-  const submittedQuotation = quotationData.filter((quotaion) => quotaion.status === 'Quotation Submitted');
+
+  const handleReject = async (key) => {
+    try {
+
+        const response = await fetch(`/api/quotation/rejectQuotation/${key._id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              status: 'Quotation Rejected',}),
+        });
+        //console.log(response);
+        if (response.ok) {
+
+          window.location.reload(false);
+            // Handle success if needed
+        } else {
+            console.error('Failed to reject proposal');
+        }
+    } catch (error) {
+        console.error('Error rejecting proposal:', error);
+    }
+  };
+  const handleBulkReject = async (key) => {
+    try {
+
+        const response = await fetch(`/api/quotation/rejectQuotation/${key._id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              status: 'Quotation Rejected',}),
+        });
+        //console.log(response);
+        if (response.ok) {
+
+          window.location.reload(false);
+            // Handle success if needed
+        } else {
+            console.error('Failed to reject proposal');
+        }
+    } catch (error) {
+        console.error('Error rejecting proposal:', error);
+    }
+  };
+  //const submittedQuotation = quotationData.filter((quotaion) => quotaion.status === 'Quotation Submitted');
   //console.log(submittedQuotation);
   const handleUploadQuotation = async (val) => {
     try {
       console.log(val);
       setQuotationError(false);
-      const budget = prompt('Enter the budget for quotaion:');
-      const details = prompt('Enter details of quotation:');
 
       const res = await fetch('/api/quotation/uploadQuotation', {
         method: 'POST',
@@ -72,13 +128,7 @@ export default function advertisement() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: currentUser.email,
-          name: currentUser.name,
           status:"Quotation Submitted",
-          description:val.description,
-          budget:budget,
-          other:details,
-          advId:val._id,
         }),
       });
       const data = await res.json();
@@ -88,47 +138,57 @@ export default function advertisement() {
       console.log(error);
     }
   };
-
   
-  const allAdvCreated = proposalAllData.filter((proposal) => proposal.status === 'Advertisement Created');
-  console.log(allAdvCreated);
-  console.log(submittedQuotation);
-  const filteredAdvCreated = allAdvCreated.filter(
-    (advCreated) => !submittedQuotation.some((submitted) => submitted.advId === advCreated._id)
+  const acceptedQuotation = AllQuotationData.filter((quotation) => quotation.status === 'Quotation Accepted');
+  //console.log(acceptedQuotation);
+  // console.log(submittedQuotation);
+  const rejectedQuotation = AllQuotationData.filter((quotation) => quotation.status === 'Quotation Rejected');
+  const toBeRejected = AllQuotationData.filter(
+    (quotation) => acceptedQuotation.some((accepted) => accepted.advId === quotation.advId && quotation._id!==accepted._id)
   );
+  // console.log(AllQuotationData);
+  // console.log(toBeRejected);
+  for(const key in toBeRejected){
+    const id=toBeRejected[key];
+    console.log(rejectedQuotation);
+  }
+
+
   return (
     <div>
-      <h1 className='text-3xl font-semibold text-center m-4'>Tender Notice</h1>
-      
+      <h1 className='bg-slate-300 rounded-xl mx-auto gap-4 flow-root p-3 text-lg font-semibold m-4'>Submitted Quotation</h1>
         <div >
-          {filteredAdvCreated.length>0?
+          {AllQuotationData.length>0?
           <>
-          <p className='text-xl font-semibold text-left m-4'>Department of Computer Science, NIT Calicut intends to procure items for its operation. Tenders are invited from registered and reputable firms for the following services:</p>
-          
-          <table className='min-w-mid  bg-slate-100 border border-slate-200 m-4 transform translate-x-1/3'>
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 m-4 mx-auto'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
+                <th className='py-2 px-4'>Submitted By</th>
                 <th className='py-2 px-4'>Description</th>
-                <th className='py-2 px-4'>Quantity</th>
                 <th className='py-2 px-4'>Budget</th>
                 <th className='py-2 px-4'>Specification</th>
-                {vendorUser?
+                <th className='py-2 px-4'>Status</th>
+                <th className='py-2 px-4'>Quotation Details</th>
+                {coordinatorUser?
                 <th className='py-2 px-4'>Action</th>
                 :''}
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {filteredAdvCreated.map((val, key) => (
+              {AllQuotationData.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
-                  <td className='py-2 px-4'>{val.advertisement}</td>
-                  <td className='py-2 px-4'>{val.quantity}</td>
+                  <td className='py-2 px-4'>{val.name}</td>
+                  <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.budget}</td>
                   <td className='py-2 px-4'>{val.specification}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                  <td className='py-2 px-4'>{val.other}</td>
                   <td>
-                    {vendorUser?
-                      <div>
-                      <button onClick={() => handleUploadQuotation(val)} className='bg-blue-900 text-white rounded-lg  px-2 py-1 m-1'>Submit Quotation</button>
-                      </div>
+                    {coordinatorUser && val.status==='Quotation Submitted'?
+                      <>
+                        <button onClick={() => handleAccept(val)} className='bg-green-800 text-white rounded-lg  px-2 py-1 m-2'>Accept</button>
+                        <button onClick={() => handleReject(val)} className='bg-red-800 text-white rounded-lg px-2 py-1 m-2'>Reject</button>
+                      </>
                       :''
                     }
                   </td>
@@ -142,31 +202,35 @@ export default function advertisement() {
 
         {/*Quotation submitted by Vendor */}
         <div>
-          {vendorUser?
+          {coordinatorUser?
           <>
-          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Submitted Quotation</h1>
-          {submittedQuotation.length>0?
-          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
-            <thead className='bg-slate-200 text-slate-700'>
-              <tr>
-                <th className='py-2 px-4'>Description</th>
-                <th className='py-2 px-4'>Status</th>
-                <th className='py-2 px-4'>Budget</th>
-                <th className='py-2 px-4'>Details</th>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Accepted Quotation</h1>
+          {acceptedQuotation.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 m-6 mx-auto'>
+          <thead className='bg-slate-200 text-slate-700'>
+            <tr>
+              <th className='py-2 px-4'>Description</th>
+              <th className='py-2 px-4'>Budget</th>
+              <th className='py-2 px-4'>Specification</th>
+              <th className='py-2 px-4'>Status</th>
+              <th className='py-2 px-4'>Quotation Details</th>
+              
+            </tr>
+          </thead>
+          <tbody className='divide-y divide-slate-200'>
+            {acceptedQuotation.map((val, key) => (
+              <tr key={key} className='hover:bg-slate-50 text-center'>
+                <td className='py-2 px-4'>{val.description}</td>
+                <td className='py-2 px-4'>{val.budget}</td>
+                <td className='py-2 px-4'>{val.specification}</td>
+                <td className='py-2 px-4'>{val.status}</td>
+                <td className='py-2 px-4'>{val.other}</td>
+                
               </tr>
-            </thead>
-            <tbody className='divide-y divide-slate-200'>
-              {submittedQuotation.map((val, key) => (
-                <tr key={key} className='hover:bg-slate-50 text-center'>
-                  <td className='py-2 px-4'>{val.description}</td>
-                  <td className='py-2 px-4'>{val.status}</td>
-                  <td className='py-2 px-4'>{val.budget}</td>
-                  <td className='py-2 px-4'>{val.other}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Proposal</h1>}
+            ))}
+          </tbody>
+        </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Quotation</h1>}
           </>
           :''}
         </div>

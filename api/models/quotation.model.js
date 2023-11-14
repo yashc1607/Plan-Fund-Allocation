@@ -31,6 +31,9 @@ const quotationSchema=new mongoose.Schema({
   advId: {
     type:String,
   },
+  specification: {
+    type:String,
+  },
 
 },{timestamps:true});
 

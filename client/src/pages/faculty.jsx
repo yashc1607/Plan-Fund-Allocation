@@ -217,8 +217,13 @@ export default function Faculty() {
   const allRequestedProposals = proposalAllData.filter((proposal) => proposal.status === 'Requested');
   const allAcceptedProposals = proposalAllData.filter((proposal) => proposal.status === 'Accepted');
   const allRejectedProposals = proposalAllData.filter((proposal) => proposal.status === 'Rejected');
-  const allSpecSubmitted = proposalAllData.filter((proposal) => proposal.status === 'Specification Submitted');
-  //console.log(requestedProposals);
+  const allSpecSubmitted = proposalAllData.filter((proposal) => proposal.status === 'Specification Submitted' ||proposal.status === 'Advertisement Created' || proposal.status === 'Quotation Accepted');
+  
+  const allowedStatuses = ['Specification Submitted', 'Advertisement Created', 'Quotation Accepted'];
+  const allSubmitted = proposalData.filter((proposal) => allowedStatuses.includes(proposal.status));
+
+  //console.log(allSubmitted);
+  
  
   const handleUploadSpecification = async (proposalId) => {
     try {
@@ -284,7 +289,7 @@ export default function Faculty() {
       {/*End:Request for proposal for program coordinator*/}
 
       {/*start:Request for proposal for program coordinator*/}
-      {currentUser.usertype==='department'?
+      {currentUser.usertype==='department'&& !showReqPropFlag?
         <div className='max-w-4xl mx-auto m-4'>
           <h1 className='text-3xl font-semibold text-center my-7'>
             Submit Proposal
@@ -380,7 +385,7 @@ export default function Faculty() {
           :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Proposal</h1>}
         </div>:''
       }
-      {specSubmitted.length>0?
+      {!showReqPropFlag && proposalData.length>0 ?
           <table className='min-w-mid  bg-slate-100 border border-slate-200 m-4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
@@ -392,7 +397,7 @@ export default function Faculty() {
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {specSubmitted.map((val, key) => (
+              {proposalData.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.quantity}</td>
@@ -407,7 +412,7 @@ export default function Faculty() {
           :''}
       {/*End: Accepted table for faculty user */}
 
-      {/*Start: Accepted proposal for faculty user */}
+      {/*Start: rejected proposal for faculty user */}
       {currentUser.usertype==='department' && !showReqPropFlag?
         <div>
           <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Rejected Proposal</h1>

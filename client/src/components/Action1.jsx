@@ -13,14 +13,16 @@ export default function Action1() {
             
             {currentUser?(
                 <>
-                    
-                    <Link to='/Faculty'>
-                        <button className='hover:bg-white p-3'>Proposals</button>
-                    </Link>
-                    
+                    {currentUser.usertype==='department'||currentUser.usertype==='coordinator'?
+                        <Link to='/Faculty'>
+                            <button className='hover:bg-white p-3'>Proposals</button>
+                        </Link>
+                    :''}
+                    {currentUser.usertype==='coordinator'?
                     <Link to='/Quotation'>
                         <button className='hover:bg-white p-3'>Quotations</button>
                     </Link>
+                    :''}
                     <Link to='/Profile'>
                         <button className='hover:bg-white p-3 float-right'>Profile</button>
                     </Link>

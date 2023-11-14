@@ -35,9 +35,12 @@ export default function advertisement() {
     }
   };
 
-  useEffect(() => {
-    getQuotation();
-  }, []);
+  if(vendorUser){
+    useEffect(() => {
+      getQuotation();
+    }, []);
+  }
+  
   const getQuotation = async () => {
     try {
       setQuotationError(false);
@@ -79,6 +82,7 @@ export default function advertisement() {
           budget:budget,
           other:details,
           advId:val._id,
+          specification:val.specification
         }),
       });
       const data = await res.json();
@@ -91,8 +95,8 @@ export default function advertisement() {
 
   
   const allAdvCreated = proposalAllData.filter((proposal) => proposal.status === 'Advertisement Created');
-  console.log(allAdvCreated);
-  console.log(submittedQuotation);
+  //console.log(allAdvCreated);
+  //console.log(submittedQuotation);
   const filteredAdvCreated = allAdvCreated.filter(
     (advCreated) => !submittedQuotation.some((submitted) => submitted.advId === advCreated._id)
   );
@@ -145,7 +149,7 @@ export default function advertisement() {
           {vendorUser?
           <>
           <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Submitted Quotation</h1>
-          {submittedQuotation.length>0?
+          {quotationData.length>0?
           <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
@@ -156,7 +160,7 @@ export default function advertisement() {
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {submittedQuotation.map((val, key) => (
+              {quotationData.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.status}</td>

@@ -1,6 +1,11 @@
 import express from 'express';
-import { uploadQuotation,getQuotation } from '../controllers/quotation.controller.js';
+import { uploadQuotation,getQuotation,getAllQuotation,acceptQuotation, rejectQuotation,rejectAllQuotation } from '../controllers/quotation.controller.js';
 const quotationRouter = express.Router();
 quotationRouter.post("/uploadQuotation",uploadQuotation);
-proposalRouter.get("/getQuotation",getQuotation);
+quotationRouter.get("/getQuotation",getQuotation);
+quotationRouter.get("/getAllQuotation",getAllQuotation);
+quotationRouter.get("/acceptQuotation",acceptQuotation);
+quotationRouter.post('/acceptQuotation/:id', acceptQuotation);
+quotationRouter.post('/rejectQuotation/:id', rejectQuotation);
+quotationRouter.post('/rejectAllQuotation/:id', rejectAllQuotation);
 export default quotationRouter;
