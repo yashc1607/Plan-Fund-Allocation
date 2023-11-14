@@ -31,6 +31,7 @@ export default function OAuth() {
             }else {
               // Set an error message if the email address is not valid
               setErrorMessage('Email address does not end with @nitc.ac.in');
+              console.log('Email address does not end with @nitc.ac.in');
             }
         }
         catch(error){
