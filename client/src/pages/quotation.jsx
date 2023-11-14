@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-
 
 export default function advertisement() {
   var coordinatorUser=false;
@@ -119,7 +117,7 @@ export default function advertisement() {
   //console.log(submittedQuotation);
   const handleUploadQuotation = async (val) => {
     try {
-      console.log(val);
+      //console.log(val);
       setQuotationError(false);
 
       const res = await fetch('/api/quotation/uploadQuotation', {
@@ -135,7 +133,7 @@ export default function advertisement() {
       setSubmissionData(data);
     } catch (error) {
       setSubmissionData(error);
-      console.log(error);
+      //console.log(error);
     }
   };
   
@@ -153,7 +151,7 @@ export default function advertisement() {
     console.log(rejectedQuotation);
   }
 
-
+  
   return (
     <div>
       <h1 className='bg-slate-300 rounded-xl mx-auto gap-4 flow-root p-3 text-lg font-semibold m-4'>Submitted Quotation</h1>
@@ -235,6 +233,7 @@ export default function advertisement() {
           :''}
         </div>
     </div>
+    
   )
 }
 

@@ -64,7 +64,7 @@ export default function advertisement() {
   //console.log(submittedQuotation);
   const handleUploadQuotation = async (val) => {
     try {
-      console.log(val);
+      //console.log(val);
       setQuotationError(false);
       const budget = prompt('Enter the budget for quotaion:');
       const details = prompt('Enter details of quotation:');
@@ -89,7 +89,7 @@ export default function advertisement() {
       setSubmissionData(data);
     } catch (error) {
       setSubmissionData(error);
-      console.log(error);
+      //console.log(error);
     }
   };
 

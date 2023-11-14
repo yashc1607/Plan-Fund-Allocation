@@ -55,16 +55,16 @@ export default function Faculty() {
         }),
       });
       const data = await res.json();
-      console.log(data);
+      //console.log(data);
       if (data.success === false) {
-        console.log(data.message);
+        //console.log(data.message);
         return;
       }
       window.location.reload(false);
-      console.log(data.message);
+      //console.log(data.message);
     } 
     catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
     }
   };
 
@@ -220,7 +220,7 @@ export default function Faculty() {
   const allSpecSubmitted = proposalAllData.filter((proposal) => proposal.status === 'Specification Submitted' ||proposal.status === 'Advertisement Created' || proposal.status === 'Quotation Accepted');
   
   const allowedStatuses = ['Specification Submitted', 'Advertisement Created', 'Quotation Accepted'];
-  const allSubmitted = proposalData.filter((proposal) => allowedStatuses.includes(proposal.status));
+  const allSubmittedAccepted = proposalData.filter((proposal) => allowedStatuses.includes(proposal.status));
 
   //console.log(allSubmitted);
   
@@ -238,7 +238,7 @@ export default function Faculty() {
 
       if (response.ok) {
         // Handle success if needed
-        console.log('Specification uploaded successfully');
+        //console.log('Specification uploaded successfully');
         window.location.reload(false);
       } else {
         console.error('Failed to upload specification');
@@ -258,12 +258,12 @@ export default function Faculty() {
         },
         body: JSON.stringify({ status: 'Advertisement Created',advertisement:advertisement}),
       });
-      console.log(response);
+      //console.log(response);
       if (response.ok) {
-        console.log('Advertisement Created successfully');
+       // console.log('Advertisement Created successfully');
         window.location.reload(false);
       } else {
-        console.error('Failed to create Advertisement');
+        //console.error('Failed to create Advertisement');
       }
     } catch (error) {
       console.error('Error creating Advertisement:', error);
@@ -385,7 +385,7 @@ export default function Faculty() {
           :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Proposal</h1>}
         </div>:''
       }
-      {!showReqPropFlag && proposalData.length>0 ?
+      {!showReqPropFlag && allSubmittedAccepted.length>0 ?
           <table className='min-w-mid  bg-slate-100 border border-slate-200 m-4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
@@ -397,7 +397,7 @@ export default function Faculty() {
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {proposalData.map((val, key) => (
+              {allSubmittedAccepted.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.quantity}</td>
@@ -484,7 +484,7 @@ export default function Faculty() {
 
       {currentUser.usertype==='coordinator' && !showReqPropFlag?
         <div >
-          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-m font-semibold m-4'>Specification</h1>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-m font-semibold m-4'>Accepted Proposal</h1>
           {allSpecSubmitted.length>0?
           <table className='min-w-mid bg-slate-100 border border-slate-200 mx-auto mt-4 '>
             <thead className='bg-slate-200 text-slate-700'>
