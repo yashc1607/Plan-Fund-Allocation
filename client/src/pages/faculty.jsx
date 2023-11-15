@@ -217,7 +217,7 @@ export default function Faculty() {
   const allRequestedProposals = proposalAllData.filter((proposal) => proposal.status === 'Requested');
   const allAcceptedProposals = proposalAllData.filter((proposal) => proposal.status === 'Accepted');
   const allRejectedProposals = proposalAllData.filter((proposal) => proposal.status === 'Rejected');
-  const allSpecSubmitted = proposalAllData.filter((proposal) => proposal.status === 'Specification Submitted' ||proposal.status === 'Advertisement Created' || proposal.status === 'Quotation Accepted');
+  const allSpecSubmitted = proposalAllData.filter((proposal) => proposal.status === 'Specification Submitted' ||proposal.status === 'Advertisement Created' || proposal.status === 'Quotation Accepted'|| proposal.status === 'Delivered');
   
   const allowedStatuses = ['Specification Submitted', 'Advertisement Created', 'Quotation Accepted'];
   const allSubmittedAccepted = proposalData.filter((proposal) => allowedStatuses.includes(proposal.status));

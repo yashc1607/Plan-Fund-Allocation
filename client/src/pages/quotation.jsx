@@ -138,6 +138,8 @@ export default function advertisement() {
   };
   
   const acceptedQuotation = AllQuotationData.filter((quotation) => quotation.status === 'Quotation Accepted');
+  const deliveredQuotation = AllQuotationData.filter((quotation) => quotation.status === 'Delivered');
+  console.log(deliveredQuotation);
   //console.log(acceptedQuotation);
   // console.log(submittedQuotation);
   const rejectedQuotation = AllQuotationData.filter((quotation) => quotation.status === 'Quotation Rejected');
@@ -205,30 +207,61 @@ export default function advertisement() {
           <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Accepted Quotation</h1>
           {acceptedQuotation.length>0?
           <table className='min-w-mid  bg-slate-100 border border-slate-200 m-6 mx-auto'>
-          <thead className='bg-slate-200 text-slate-700'>
-            <tr>
-              <th className='py-2 px-4'>Description</th>
-              <th className='py-2 px-4'>Budget</th>
-              <th className='py-2 px-4'>Specification</th>
-              <th className='py-2 px-4'>Status</th>
-              <th className='py-2 px-4'>Quotation Details</th>
-              
-            </tr>
-          </thead>
-          <tbody className='divide-y divide-slate-200'>
-            {acceptedQuotation.map((val, key) => (
-              <tr key={key} className='hover:bg-slate-50 text-center'>
-                <td className='py-2 px-4'>{val.description}</td>
-                <td className='py-2 px-4'>{val.budget}</td>
-                <td className='py-2 px-4'>{val.specification}</td>
-                <td className='py-2 px-4'>{val.status}</td>
-                <td className='py-2 px-4'>{val.other}</td>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Budget</th>
+                <th className='py-2 px-4'>Specification</th>
+                <th className='py-2 px-4'>Status</th>
+                <th className='py-2 px-4'>Quotation Details</th>
                 
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {acceptedQuotation.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.budget}</td>
+                  <td className='py-2 px-4'>{val.specification}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                  <td className='py-2 px-4'>{val.other}</td>
+                  
+                </tr>
+              ))}
+            </tbody>
+          </table>
           :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Quotation</h1>}
+          </>
+          :''}
+          {coordinatorUser?
+          <>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Delivered Quotation</h1>
+          {deliveredQuotation.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 m-6 mx-auto'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Budget</th>
+                <th className='py-2 px-4'>Specification</th>
+                <th className='py-2 px-4'>Status</th>
+                <th className='py-2 px-4'>Quotation Details</th>
+                
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {deliveredQuotation.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.budget}</td>
+                  <td className='py-2 px-4'>{val.specification}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                  <td className='py-2 px-4'>{val.other}</td>
+                  
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Delivered Quotation</h1>}
           </>
           :''}
         </div>

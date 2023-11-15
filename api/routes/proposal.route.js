@@ -1,5 +1,5 @@
 import express from 'express';
-import { uploadProposal,getProposal,acceptProposal,rejectProposal,getAllProposal,submitSpecification,advCreated,acceptQuotation} from '../controllers/proposal.controller.js';
+import { uploadProposal,getProposal,acceptProposal,rejectProposal,getAllProposal,submitSpecification,advCreated,acceptQuotation,deliveredQuotation} from '../controllers/proposal.controller.js';
 const proposalRouter = express.Router();
 proposalRouter.post("/uploadProposal",uploadProposal);
 proposalRouter.get("/getProposal",getProposal);

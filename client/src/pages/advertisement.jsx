@@ -96,7 +96,7 @@ export default function advertisement() {
     }
   };
 
-  const handleDeliveredQuotation = async (val) => {
+  const handleDeliveredQuotation = async (key) => {
     try {
         const response = await fetch(`/api/quotation/deliveredQuotation/${key._id}`, {
             method: 'POST',
