@@ -102,3 +102,26 @@ export const rejectAllQuotation = async (req, res, next) => {
       next(error);
   }
 };
+
+export const deliveredQuotation = async (req, res, next) => {
+  //const { id } = req.params;
+  try {
+      const { status } = req.body;
+      const updatedQuotation = await Quotation.findOneAndUpdate(
+        {_id:req.params.id},
+        {
+          $set: {
+            status: status
+          },
+        },
+        { new: true }
+      );
+      //console.log(updatedQuotation);
+      if (!updatedQuotation) {
+          return res.status(404).json({ error: 'Quotation not found' });
+      }
+      res.status(200).json({ message: 'Quotation accepted successfully', Quotation: updatedQuotation });
+  } catch (error) {
+      next(error);
+  }
+};

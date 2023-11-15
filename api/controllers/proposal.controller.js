@@ -147,3 +147,25 @@ export const acceptQuotation = async (req, res, next) => {
       next(error);
   }
 };
+export const deliveredQuotation = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+      const updatedProposal = await Proposal.findOneAndUpdate(
+        {_id:req.params.id},
+        {
+          $set: {
+            status: status
+          },
+        },
+        { new: true }
+      );
+      //console.log(updatedProposal);
+      if (!updatedProposal) {
+          return res.status(404).json({ error: 'Proposal not found' });
+      }
+      res.status(200).json({ message: 'proposal updated successfully', proposal: updatedProposal,
+    });
+  } catch (error) {
+      next(error);
+  }
+};

@@ -1,5 +1,5 @@
 import express from 'express';
-import { uploadQuotation,getQuotation,getAllQuotation,acceptQuotation, rejectQuotation,rejectAllQuotation } from '../controllers/quotation.controller.js';
+import { uploadQuotation,getQuotation,getAllQuotation,acceptQuotation, rejectQuotation,rejectAllQuotation,deliveredQuotation} from '../controllers/quotation.controller.js';
 const quotationRouter = express.Router();
 quotationRouter.post("/uploadQuotation",uploadQuotation);
 quotationRouter.get("/getQuotation",getQuotation);
@@ -8,4 +8,5 @@ quotationRouter.get("/acceptQuotation",acceptQuotation);
 quotationRouter.post('/acceptQuotation/:id', acceptQuotation);
 quotationRouter.post('/rejectQuotation/:id', rejectQuotation);
 quotationRouter.post('/rejectAllQuotation/:id', rejectAllQuotation);
+quotationRouter.post('/deliveredQuotation/:id', deliveredQuotation);
 export default quotationRouter;

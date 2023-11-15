@@ -61,7 +61,10 @@ export default function advertisement() {
     }
   };
   const submittedQuotation = quotationData.filter((quotaion) => quotaion.status === 'Quotation Submitted');
-  //console.log(submittedQuotation);
+  const nonAcceptedQuotation = quotationData.filter((quotaion) => quotaion.status !== 'Quotation Accepted');
+  const acceptedQuotation = quotationData.filter((quotaion) => quotaion.status === 'Quotation Accepted');
+  const delivered = quotationData.filter((quotaion) => quotaion.status === 'Delivered');
+  //console.log(acceptedQuotation);
   const handleUploadQuotation = async (val) => {
     try {
       //console.log(val);
@@ -93,7 +96,39 @@ export default function advertisement() {
     }
   };
 
-  
+  const handleDeliveredQuotation = async (val) => {
+    try {
+        const response = await fetch(`/api/quotation/deliveredQuotation/${key._id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              status: 'Delivered'}),
+        });
+        //console.log(response);
+        if (response.ok) {
+          const res = await fetch(`/api/proposal/deliveredQuotation/${key.advId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                status: 'Delivered'}),
+          });
+          window.location.reload(false);
+          
+          //handleBulkReject();
+          
+            // Handle success if needed
+        } else {
+            console.error('Failed to accept proposal');
+        }
+    } catch (error) {
+        console.error('Error accepting proposal:', error);
+    }
+  };
+
   const allAdvCreated = proposalAllData.filter((proposal) => proposal.status === 'Advertisement Created');
   //console.log(allAdvCreated);
   //console.log(submittedQuotation);
@@ -149,7 +184,7 @@ export default function advertisement() {
           {vendorUser?
           <>
           <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Submitted Quotation</h1>
-          {quotationData.length>0?
+          {nonAcceptedQuotation.length>0?
           <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
             <thead className='bg-slate-200 text-slate-700'>
               <tr>
@@ -160,7 +195,7 @@ export default function advertisement() {
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-200'>
-              {quotationData.map((val, key) => (
+              {nonAcceptedQuotation.map((val, key) => (
                 <tr key={key} className='hover:bg-slate-50 text-center'>
                   <td className='py-2 px-4'>{val.description}</td>
                   <td className='py-2 px-4'>{val.status}</td>
@@ -170,7 +205,72 @@ export default function advertisement() {
               ))}
             </tbody>
           </table>
-          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Proposal</h1>}
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Submitted Quotations</h1>}
+          </>
+          :''}
+          {vendorUser?
+          <>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Accepted Quotation</h1>
+          {acceptedQuotation.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Status</th>
+                <th className='py-2 px-4'>Budget</th>
+                <th className='py-2 px-4'>Details</th>
+                {vendorUser?
+                <th className='py-2 px-4'>Action</th>
+                :''}
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {acceptedQuotation.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                  <td className='py-2 px-4'>{val.budget}</td>
+                  <td className='py-2 px-4'>{val.other}</td>
+                  <td>
+                    {vendorUser?
+                      <div>
+                      <button onClick={() => handleDeliveredQuotation(val)} className='bg-blue-900 text-white rounded-lg  px-2 py-1 m-1'>Delivered</button>
+                      </div>
+                      :''
+                    }
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Accepted Quotations</h1>}
+          </>
+          :''}
+          {vendorUser?
+          <>
+          <h1 className='bg-slate-300 rounded-xl mx-2 gap-4 flow-root p-3 text-lg font-semibold'>Delivered Quotation</h1>
+          {delivered.length>0?
+          <table className='min-w-mid  bg-slate-100 border border-slate-200 mx-2 m-4 transform translate-x-1/4'>
+            <thead className='bg-slate-200 text-slate-700'>
+              <tr>
+                <th className='py-2 px-4'>Description</th>
+                <th className='py-2 px-4'>Status</th>
+                <th className='py-2 px-4'>Budget</th>
+                <th className='py-2 px-4'>Details</th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-slate-200'>
+              {delivered.map((val, key) => (
+                <tr key={key} className='hover:bg-slate-50 text-center'>
+                  <td className='py-2 px-4'>{val.description}</td>
+                  <td className='py-2 px-4'>{val.status}</td>
+                  <td className='py-2 px-4'>{val.budget}</td>
+                  <td className='py-2 px-4'>{val.other}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :<h1 className='text-center text-amber-700 text-lg font-semibold m-4'>No Delivered Quotations</h1>}
           </>
           :''}
         </div>

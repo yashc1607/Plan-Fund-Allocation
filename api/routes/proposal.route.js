@@ -9,5 +9,6 @@ proposalRouter.post('/rejectProposal/:id', rejectProposal);
 proposalRouter.post('/submitSpecification/:id', submitSpecification);
 proposalRouter.post('/advCreated/:id', advCreated);
 proposalRouter.post('/acceptQuotation/:id', acceptQuotation);
+proposalRouter.post('/deliveredQuotation/:id', deliveredQuotation);
 export default proposalRouter;
 
